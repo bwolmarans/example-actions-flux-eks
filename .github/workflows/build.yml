@@ -38,14 +38,14 @@ jobs:
         #$(aws ecr get-login --no-include-email )
         #this would normally result in 
         #ocker login -u AWS -p <password> -e none https://<aws_account_id>.dkr.ecr.<region>.amazonaws.com
-        aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+        aws ecr get-login-password | docker login --username AWS --password-stdin 058625519174.dkr.ecr.us-east-1.amazonaws.com
 
     - name: Build and tag the image
       run: |
         # Build and tag the image
         docker build \
           -t $CONTAINER_IMAGE \
-          -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE ./app
+          -t 058625519174.dkr.ecr.us-east-1.amazonaws.com/$CONTAINER_IMAGE ./app
            
     # Add additional steps here like scanning of image
 
@@ -54,4 +54,4 @@ jobs:
       if: github.ref == 'refs/heads/master'
       run: |
         # Push image to AWS ECR
-        docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE
+        docker push 058625519174.dkr.ecr.us-east-1.amazonaws.com/$CONTAINER_IMAGE
