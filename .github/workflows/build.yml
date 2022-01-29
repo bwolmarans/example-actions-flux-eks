@@ -34,7 +34,11 @@ jobs:
     - name: Setup ECR
       run: |
         # Login to AWS ECR
-        $( aws ecr get-login --no-include-email )
+        #ecr-login is fully deprecated!
+        #$(aws ecr get-login --no-include-email )
+        #this would normally result in 
+        #ocker login -u AWS -p <password> -e none https://<aws_account_id>.dkr.ecr.<region>.amazonaws.com
+        aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
 
     - name: Build and tag the image
       run: |
