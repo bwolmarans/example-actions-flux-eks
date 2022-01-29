@@ -47,8 +47,8 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: example-eks
-        IMAGE_TAG: example-eks
+        IMAGE_TAG: example-eks:latest
       run: |
         #docker build -t $CONTAINER_IMAGE -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$CONTAINER_IMAGE ./app
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./app
+        docker build -t $CONTAINER_IMAGE -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./app
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
