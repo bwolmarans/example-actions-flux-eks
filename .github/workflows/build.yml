@@ -59,21 +59,21 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./app
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
     
-    - name: Sign image with a key
+    - name: place the cosign private key in a file
       env:
-        #TAGS: ${{ steps.docker_meta.outputs.tags }}
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: example-eks
-        IMAGE_TAG: example-eks          
-        #COSIGN_KEY: ${{secrets.COSIGN_KEY}}
-        COSIGN_KEY: 'eyJrZGYiOnsibmFtZSI6InNjcnlwdCIsInBhcmFtcyI6eyJOIjozMjc2OCwiciI6OCwicCI6MX0sInNhbHQiOiJrWTRXSnNNUXVWdnExakg0NUM1VWk2bHdtVWNGdFhQanVDK09TV0NlM2gwPSJ9LCJjaXBoZXIiOnsibmFtZSI6Im5hY2wvc2VjcmV0Ym94Iiwibm9uY2UiOiIveDdBSGpGbFhBQzk1anFaT2lzQ1F1QVZHUkZ3V2cyNSJ9LCJjaXBoZXJ0ZXh0IjoiZ1FqU3RualNNbDJPVERHckdMWVA1T2xjb0h4S2JIOFpRbVE3ZTlVTjg5SlhIVlZnVGJTc05uQ3FuR00xWlcxZmM5ME04c3FYUDJBUGVTUXZibjgybGNnTVdKVkxnRXdpMEdvYVUyYTE5NnJBaE85TW9sNlJIV2E0RlFJa08zTGNDR21ld3Myb01oWFJhVDN4TmtaWmYrU1RWeFBXbmVWR1U3Ym9pTGpKRnh5Z2JYdmFzZ3N4OWhwczhld25BbFQ4cE1CVENQUG93WXdvUUE9PSJ9'
-        COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
+        COSIGN_KEY: ${{secrets.COSIGN_KEY}}
+        #COSIGN_KEY: 'eyJrZGYiOnsibmFtZSI6InNjcnlwdCIsInBhcmFtcyI6eyJOIjozMjc2OCwiciI6OCwicCI6MX0sInNhbHQiOiJrWTRXSnNNUXVWdnExakg0NUM1VWk2bHdtVWNGdFhQanVDK09TV0NlM2gwPSJ9LCJjaXBoZXIiOnsibmFtZSI6Im5hY2wvc2VjcmV0Ym94Iiwibm9uY2UiOiIveDdBSGpGbFhBQzk1anFaT2lzQ1F1QVZHUkZ3V2cyNSJ9LCJjaXBoZXJ0ZXh0IjoiZ1FqU3RualNNbDJPVERHckdMWVA1T2xjb0h4S2JIOFpRbVE3ZTlVTjg5SlhIVlZnVGJTc05uQ3FuR00xWlcxZmM5ME04c3FYUDJBUGVTUXZibjgybGNnTVdKVkxnRXdpMEdvYVUyYTE5NnJBaE85TW9sNlJIV2E0RlFJa08zTGNDR21ld3Myb01oWFJhVDN4TmtaWmYrU1RWeFBXbmVWR1U3Ym9pTGpKRnh5Z2JYdmFzZ3N4OWhwczhld25BbFQ4cE1CVENQUG93WXdvUUE9PSJ9'
+        #COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
 
-      run: |
-        echo ${COSIGN_KEY} > /tmp/my_cosign.key
-        echo '________________________________________________________________________________________________'
-        cat /tmp/my_cosign.key
-        echo '________________________________________________________________________________________________'
+      run: 'echo "$COSIGN_KEY" > /tmp/cosign.key'
+      shell: bash
+        
+    - name: Sign the image pushed
+      run: echo -n "${{secrets.COSIGN_PASSWORD}}" | cosign sign --key /tmp/cosign.key  $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG     
+        #echo ${COSIGN_KEY} > /tmp/my_cosign.key
+        #echo '________________________________________________________________________________________________'
+        #cat /tmp/my_cosign.key
+        #echo '________________________________________________________________________________________________'
         #echo -n "${COSIGN_PASSWORD}" |cosign sign --key /tmp/my_cosign.key $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo -n hello123 | cosign sign --key /tmp/my_cosign.key $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        #echo -n hello123 | cosign sign --key /tmp/my_cosign.key $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
     
