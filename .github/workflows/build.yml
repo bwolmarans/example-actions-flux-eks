@@ -69,7 +69,11 @@ jobs:
       shell: bash
         
     - name: Sign the image pushed
-      run: echo -n "${{secrets.COSIGN_PASSWORD}}" | cosign sign --key /tmp/cosign.key  $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG     
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: example-eks
+        IMAGE_TAG: example-eks
+      run: echo -n "${{secrets.COSIGN_PASSWORD}}" | cosign sign --key /tmp/cosign.key $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG     
         #echo ${COSIGN_KEY} > /tmp/my_cosign.key
         #echo '________________________________________________________________________________________________'
         #cat /tmp/my_cosign.key
