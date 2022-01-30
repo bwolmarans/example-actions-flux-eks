@@ -72,7 +72,9 @@ jobs:
         ECR_REPOSITORY: example-eks
         IMAGE_TAG: latest
       #run: echo -n "${{secrets.COSIGN_PASSWORD}}" | cosign sign --key /tmp/cosign.key $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-      run: echo -n "${{secrets.COSIGN_PASSWORD}}" | cosign sign --key /tmp/cosign.key  058625519174.dkr.ecr.us-east-1.amazonaws.com/example-eks:latest
+      run: |
+        cat /tmp/cosign.key
+        echo -n "${{secrets.COSIGN_PASSWORD}}" | cosign sign --key /tmp/cosign.key  058625519174.dkr.ecr.us-east-1.amazonaws.com/example-eks:latest
         #echo ${COSIGN_KEY} > /tmp/my_cosign.key
         #echo '________________________________________________________________________________________________'
         #cat /tmp/my_cosign.key
