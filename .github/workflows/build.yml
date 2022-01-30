@@ -60,9 +60,6 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
     
     - name: Sign image with a key
-      run: |
-        echo ${COSIGN_KEY} > /tmp/my_cosign.key && \
-        cosign sign --key /tmp/my_cosign.key $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       env:
         #TAGS: ${{ steps.docker_meta.outputs.tags }}
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -70,5 +67,10 @@ jobs:
         IMAGE_TAG: example-eks          
         COSIGN_KEY: ${{secrets.COSIGN_KEY}}
         COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
+
+      run: |
+        echo $COSIGN_KEY
+        echo $COSIGN_KEY > /tmp/my_cosign.key && \
+        cosign sign --key /tmp/my_cosign.key $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
     
     
