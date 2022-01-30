@@ -46,7 +46,10 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push image to Amazon ECR
+    - name: Install Cosign
+      uses: sigstore/cosign-installer@main
+
+    - name: Build, tag, push image to Amazon ECR, and sign with Ccosign
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: example-eks
@@ -55,3 +58,17 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./app
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+    
+    - name: Sign image with a key
+      run: |
+        echo ${COSIGN_KEY} > /tmp/my_cosign.key && \
+        cosign sign --key /tmp/my_cosign.key $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      env:
+        #TAGS: ${{ steps.docker_meta.outputs.tags }}
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: example-eks
+        IMAGE_TAG: example-eks          
+        COSIGN_KEY: ${{secrets.COSIGN_KEY}}
+        COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
+    
+    
