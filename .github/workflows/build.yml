@@ -8,6 +8,9 @@ on:
     - app/**
     branches:         # array of glob patterns matching against refs/heads. Optional; defaults to all
     - master          # triggers on pushes that contain changes in master
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
 
 name: Build and Push to ECR
 
